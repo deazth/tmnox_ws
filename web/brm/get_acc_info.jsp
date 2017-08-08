@@ -11,7 +11,8 @@
 <%
 
   response.setContentType("application/json");
-  response.setHeader("Content-Disposition", "inline");
+  response.addHeader("Content-Disposition", "inline");
+  response.addHeader("Access-Control-Allow-Origin", "*");
 
   String bano = request.getParameter("bano");
   

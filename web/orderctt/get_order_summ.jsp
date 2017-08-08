@@ -16,51 +16,60 @@
 
 <%
 
-    response.setContentType("application/json");
-    response.addHeader("Content-Disposition", "inline");
-    response.addHeader("Access-Control-Allow-Origin", "*");
+  response.setContentType("application/json");
+  response.addHeader("Content-Disposition", "inline");
+  response.addHeader("Access-Control-Allow-Origin", "*");
 
-    String ordernum = request.getParameter("ordernum");
+  String ordernum = request.getParameter("ordernum");
 
-    dbHandler dbh = new dbHandler();
+  JsonObjectBuilder accInfo = Json.createObjectBuilder();
 
-    // account info
-    String sql = "select * from order_s_acc where order_num = '" + ordernum + "'";
-
-    ResultSet rs = dbh.execSelect(sql);
-
-    JsonObjectBuilder accInfo = Json.createObjectBuilder();
-
-    if (rs.next()) {
-        accInfo
-                .add("order_type", dbHandler.getStr(rs, "order_type"))
-                .add("acc_name", dbHandler.getStr(rs, "account_name"))
-                .add("order_status", dbHandler.getStr(rs, "order_status"));
+  accInfo
+          .add("order_type", "New Install")
+          .add("acc_name", "WINNIE HII WEN YAH")
+          .add("order_status", "Processing");
 
         // get the list of services
-        sql = "select * from order_s_svc where order_num = '" + ordernum + "'";
-        rs = dbh.execSelect(sql);
+  JsonArrayBuilder svcList = Json.createArrayBuilder();
 
-        JsonArrayBuilder svcList = Json.createArrayBuilder();
+  JsonObject svcs = Json.createObjectBuilder()
+          .add("svc_id", "winnie1@iptv")
+          .add("product_name", "HyppTV Residential")
+          .add("product_code", "")
+          .add("product_desc", "TM HSBB R2 Product")
+          .build();
 
-        while (rs.next()) {
-            JsonObject svcs = Json.createObjectBuilder()
-                    .add("svc_id", dbHandler.getStr(rs, "svc_id"))
-                    .add("product_name", dbHandler.getStr(rs, "product_name"))
-                    .add("product_code", dbHandler.getStr(rs, "product_code"))
-                    .add("product_desc", dbHandler.getStr(rs, "product_desc"))
-                    .build();
+  svcList.add(svcs);
+  
+  svcs = Json.createObjectBuilder()
+          .add("svc_id", "6084252947")
+          .add("product_name", "Residential Voice")
+          .add("product_code", "")
+          .add("product_desc", "TM HSBB R2 Product")
+          .build();
 
-            svcList.add(svcs);
-        }
+  svcList.add(svcs);
+  
+  svcs = Json.createObjectBuilder()
+          .add("svc_id", "winnie1@unifi")
+          .add("product_name", "High Speed Internet - Residential - 30 Mbps")
+          .add("product_code", "")
+          .add("product_desc", "TM HSBB R3 CR Product")
+          .build();
 
-        accInfo.add("services", svcList.build());
-    } else {
-        accInfo.add("error", "Not Found");
-    }
+  svcList.add(svcs);
+  
+  svcs = Json.createObjectBuilder()
+          .add("svc_id", "winnie1@iptv")
+          .add("product_name", "HyppTV Everywhere")
+          .add("product_code", "")
+          .add("product_desc", "TM HSBB R3 CR Product")
+          .build();
 
-    dbh.close();
+  svcList.add(svcs);
 
-    response.getWriter().print(accInfo.build().toString());
+  accInfo.add("services", svcList.build());
+
+  response.getWriter().print(accInfo.build().toString());
 
 %>
